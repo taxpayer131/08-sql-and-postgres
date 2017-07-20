@@ -1,6 +1,6 @@
 'use strict';
 
-// TODO: Install and require the NPM Postgres package 'pg' into your server.js, and ensure that it is then listed as a dependency in your package.json
+// DONE: Install and require the NPM Postgres package 'pg' into your server.js, and ensure that it is then listed as a dependency in your package.json
 const fs = require('fs');
 const express = require('express');
 const pg = require('pg');
@@ -10,17 +10,17 @@ const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-// TODO: Complete the connection string for the url that will connect to your local postgres database
+// DONE: Complete the connection string for the url that will connect to your local postgres database
 // Windows and Linux users; You should have retained the user/pw from the pre-work for this course.
 // Your url may require that it's composed of additional information including user and password
 // const conString = 'postgres://USER:PASSWORD@HOST:PORT/DBNAME';
-const conString = 'postgres://chrisStefan:~%Lagn5fit1845:5432/kilovolt';
+const conString = 'postgres://postgres:1234:5432/kilovolt';
 
-// TODO: Our pg module has a Client constructor that accepts one argument: the conString we just defined.
+// DONE: Our pg module has a Client constructor that accepts one argument: the conString we just defined.
 //       This is how it knows the URL and, for Windows and Linux users, our username and password for our
 //       database when client.connect is called on line 26. Thus, we need to pass our conString into our
 //       pg.Client() call.
-const client = new pg.Client('conString');
+const client = new pg.Client(conString);
 
 // REVIEW: Use the client object to connect to our DB.
 client.connect();
@@ -35,7 +35,7 @@ app.use(express.static('./public'));
 // REVIEW: Routes for requesting HTML resources
 app.get('/new', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // Put your response here...
+  // Put your response here...(5). FetchAll with the $.get method. Read/Retrieve.
   response.sendFile('new.html', {root: './public'});
 });
 
@@ -43,7 +43,7 @@ app.get('/new', function(request, response) {
 // REVIEW: Routes for making API calls to use CRUD Operations on our database
 app.get('/articles', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // Put your response here...
+  // Put your response here... (3) FetchAll but now it is listening for the .then success or error. Read/Retrieve is being enacted.
   client.query('SELECT * FROM articles')
   .then(function(result) {
     response.send(result.rows);
@@ -55,7 +55,7 @@ app.get('/articles', function(request, response) {
 
 app.post('/articles', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // Put your response here...
+  // Put your response here... (1, 2, 3) Article.prototype.insertRecord is what is interacting with server.js. Create.
   client.query(
     `
       INSERT INTO
@@ -81,7 +81,7 @@ app.post('/articles', function(request, response) {
 
 app.put('/articles/:id', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // Put your response here...
+  // Put your response here...(1,2,3) Article.prototype.updateRecord is interacting with server.js. Update.
   client.query(
     `UPDATE articles
     SET
@@ -108,7 +108,7 @@ app.put('/articles/:id', function(request, response) {
 
 app.delete('/articles/:id', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // Put your response here...
+  // Put your response here... (1,2,3) Article.prototype.deleteRecord is interacting with server.js to delete a specific id. Destroy.
   client.query(
     `DELETE FROM articles WHERE article_id=$1;`,
     [request.params.id]
@@ -123,7 +123,7 @@ app.delete('/articles/:id', function(request, response) {
 
 app.delete('/articles', function(request, response) {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // Put your response here...
+  // Put your response here...(1,2,3) Article.prototype.deleteRecord is interacting with server.js to delete all of the articles. Destroy.
   client.query(
     'DELETE FROM articles;'
   )
@@ -139,7 +139,7 @@ app.delete('/articles', function(request, response) {
 
 
 // COMMENT: What is this function invocation doing?
-// Put your response here...
+// Put your response here...Loading the database.
 loadDB();
 
 app.listen(PORT, function() {
@@ -151,7 +151,7 @@ app.listen(PORT, function() {
 ////////////////////////////////////////
 function loadArticles() {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // Put your response here...
+  // Put your response here...(4,5) Article.truncateTable is being interacted with. Read.
   client.query('SELECT COUNT(*) FROM articles')
   .then(function(result) {
     // REVIEW: result.rows is an array of objects that Postgres returns as a response to a query.
@@ -178,7 +178,7 @@ function loadArticles() {
 
 function loadDB() {
   // COMMENT: What number(s) of the full-stack-diagram.png image correspond to the following line of code? Which method of article.js is interacting with this particular piece of `server.js`? What part of CRUD is being enacted/managed by this particular piece of code?
-  // Put your response here...
+  // Put your response here... (4,5,1) Article.truncateTable is still interacting with server.js. Read or Create could be used depending on the IF statement.
   client.query(`
     CREATE TABLE IF NOT EXISTS articles (
       article_id SERIAL PRIMARY KEY,
